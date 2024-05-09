@@ -13,7 +13,7 @@ public class MIKEMap : MonoBehaviour
 
     void Awake()
     {
-        Debug.Log(GetPositionFromCode("F7"));
+        Debug.Log(GetPositionFromCode("V7"));
     }
 
     Vector3 GetPositionFromCode(string code)
