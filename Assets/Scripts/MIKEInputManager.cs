@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,7 +10,7 @@ public class MIKEInputManager : MonoBehaviour
     public static MIKEInputManager Main { get; private set; }
 
     // INPUTS
-    public UnityEvent Select;
+    //public UnityEvent Select;
 
     // DEVICE REGISTRATION
 
@@ -21,7 +22,7 @@ public class MIKEInputManager : MonoBehaviour
     private Dictionary<int, MIKEInputDeviceEntry> inputDeviceEntries = new Dictionary<int, MIKEInputDeviceEntry>();
     private Dictionary<int, MIKEService> services = new Dictionary<int, MIKEService>();
 
-    //
+    private int otherReliableCounter = 0;
 
     void Awake()
     {
@@ -47,36 +48,52 @@ public class MIKEInputManager : MonoBehaviour
 
         // Notify user
         MIKENotificationManager.Main.SendNotification("NOTIFICATION", "New Input Device Connected!", MIKEResources.Main.PositiveNotificationColor, 2.5f);
-        
+
     }
 
-    public void RegisterService(int id, MIKEService service)
+    public void RegisterService(ServiceType type, MIKEService service)
     {
-        services.Add(id, service);
+        services.Add((int)type, service);
     }
 
     public void ReceiveInput(byte[] data)
     {
 
-        int deviceID = data[0];
-        Debug.Log("Device id: " + deviceID + " | Count: " + data.Length);
-        
+        int id = data[0];
+        Debug.Log("ID: " + id + " | Count: " + data.Length);
+
         // First check if it's a service
-        if(services.ContainsKey(deviceID))
+        if (services.ContainsKey(id))
         {
-            services[deviceID].ReceiveData(data);
+            if (services[id].IsReliable)
+            {
+                int rc = data[1];
+                if (rc > otherReliableCounter)
+                {
+                    otherReliableCounter = rc;
+                    services[id].ReceiveData(data);
+                }
+            }
+            else
+            {
+                services[id].ReceiveData(data);
+            }
             return;
+        }
+        else
+        {
+            Debug.Log("Service " + id + " not found");
         }
 
         // If not a service, then handle it as an input device
 
-        if(!inputDeviceEntries.ContainsKey(deviceID) && deviceType.ContainsKey(deviceID))
+        if (!inputDeviceEntries.ContainsKey(id) && deviceType.ContainsKey(id))
         {
-            RegisterInputDevice(deviceID);
+            RegisterInputDevice(id);
         }
 
-        if(inputDeviceEntries.ContainsKey(deviceID))
-        inputDeviceEntries[deviceID].ReceiveData(data);
+        if (inputDeviceEntries.ContainsKey(id))
+            inputDeviceEntries[id].ReceiveData(data);
 
     }
 
@@ -89,10 +106,10 @@ public class MIKEInputManager : MonoBehaviour
 
     public void CloseAllEntries(MIKEInputDeviceEntry exception)
     {
-        foreach(MIKEInputDeviceEntry e in inputDeviceEntries.Values)
+        foreach (MIKEInputDeviceEntry e in inputDeviceEntries.Values)
         {
             if (e != exception && e.IsExpanded())
-                e.SetExpanded(false);       
+                e.SetExpanded(false);
         }
 
         exception.transform.SetAsFirstSibling();

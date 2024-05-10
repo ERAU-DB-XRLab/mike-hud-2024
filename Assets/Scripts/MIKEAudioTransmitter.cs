@@ -21,13 +21,13 @@ public class MIKEAudioTransmitter : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            currentClip = Microphone.Start("Microphone (Yeti Stereo Microphone)", false, 30, 16000);
+            currentClip = Microphone.Start(Microphone.devices[0], false, 30, 16000);
             timer = 0;
         }
 
         if (Input.GetKeyUp(KeyCode.Space))
         {
-            Microphone.End("Microphone (Yeti Stereo Microphone)");
+            Microphone.End(Microphone.devices[0]);
             audioData = new float[currentClip.samples * currentClip.channels];
             currentClip.GetData(audioData, 0);
 
@@ -43,10 +43,9 @@ public class MIKEAudioTransmitter : MonoBehaviour
 
     public void SendData()
     {
-
         byte[] byteArray = new byte[audioData.Length * 4];
         Buffer.BlockCopy(audioData, 0, byteArray, 0, byteArray.Length);
         Debug.Log("Sending sample count: " + audioData.Length);
-        MIKEServerManager.Main.SendData(byteArray);
+        MIKEServerManager.Main.SendData(ServiceType.Audio, byteArray);
     }
 }

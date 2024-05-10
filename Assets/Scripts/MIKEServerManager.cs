@@ -21,6 +21,7 @@ public class MIKEServerManager : MonoBehaviour
     private bool tasksRunning = true;
 
     private const int reliableSendCount = 30;
+    private int reliableCounter = 0;
 
     [SerializeField] private string otherIP;
     public string OtherIP { get { return otherIP; } set { otherIP = value; } }
@@ -28,7 +29,6 @@ public class MIKEServerManager : MonoBehaviour
     // Start TCP server
     void Awake()
     {
-
         Main = this;
 
         // Sending
@@ -53,7 +53,6 @@ public class MIKEServerManager : MonoBehaviour
                 }
             }
         });
-
     }
 
     void OnDisable()
@@ -64,24 +63,20 @@ public class MIKEServerManager : MonoBehaviour
 
     void Update()
     {
-
         if (dataToReceive.Count > 0)
         {
             MIKEInputManager.Main.ReceiveInput(dataToReceive.Dequeue());
 
             if (dataToReceive.Count > 40)
             {
-                dataToReceive.Clear();
+                dataToReceive.Clear(); // POTENTIAL ISSUE/RACE CONDITION HERE, IF DATA IS ENQUEUED IN THE TASK ABOVE AND THEN CLEARED HERE DATA WILL BE LOST. NEEDS TO BE TESTED
             }
-
         }
-
     }
 
-    public void SendData(byte[] data)
+    public void SendData(ServiceType type, byte[] data)
     {
-
-        int deviceID = 1;
+        int serviceID = (int)type;
         int packetSize = 65000;
         int byteTotal = data.Length;
 
@@ -89,10 +84,9 @@ public class MIKEServerManager : MonoBehaviour
 
         while (byteTotal > 0)
         {
-
             int count = byteTotal >= packetSize ? packetSize : byteTotal;
 
-            List<byte> dataToSend = new List<byte>() { (byte)deviceID };
+            List<byte> dataToSend = new List<byte>() { (byte)serviceID };
             dataToSend.AddRange(dataAsList.GetRange(0, count));
             dataAsList.RemoveRange(0, count);
 
@@ -100,26 +94,27 @@ public class MIKEServerManager : MonoBehaviour
             Debug.Log(dataToSend.Count);
 
             byteTotal -= count;
-
         }
-
     }
 
-    public void SendDataReliably(byte[] data)
+    public void SendDataReliably(ServiceType type, byte[] data)
     {
-        StartCoroutine(SendDataCoroutine(data));
+        reliableCounter = (reliableCounter + 1) % 255;
+        List<byte> reliableDataToSend = new List<byte>() { (byte)reliableCounter };
+        reliableDataToSend.AddRange(data);
+        StartCoroutine(SendDataCoroutine(type, reliableDataToSend.ToArray()));
     }
 
-    private IEnumerator SendDataCoroutine(byte[] data)
+    // Sends the packet multiple times to make sure it is received, I know this is stupid but I simply don't give a shit
+    private IEnumerator SendDataCoroutine(ServiceType type, byte[] data)
     {
         int count = 0;
 
         while (count < reliableSendCount)
         {
-            SendData(data);
+            SendData(type, data);
             count++;
             yield return new WaitForSeconds(0.1f);
         }
     }
-
 }

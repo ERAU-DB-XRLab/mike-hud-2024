@@ -2,11 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MIKEService : MonoBehaviour
+public enum ServiceType
 {
+    Audio = 1,
+    Waypoint = 6,
+}
 
-    public int serviceID;
-
-    public virtual void ReceiveData(byte[] data) { }
-
+public abstract class MIKEService : MonoBehaviour
+{
+    public ServiceType Service { get; protected set; }
+    public bool IsReliable { get; protected set; }
+    public abstract void ReceiveData(byte[] data);
 }

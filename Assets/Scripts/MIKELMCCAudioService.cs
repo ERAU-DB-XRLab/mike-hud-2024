@@ -18,8 +18,7 @@ public class MIKELMCCAudioService : MIKEService
 
     void Start()
     {
-        serviceID = 1;
-        MIKEInputManager.Main.RegisterService(serviceID, this);
+        MIKEInputManager.Main.RegisterService(ServiceType.Audio, this);
     }
 
     public override void ReceiveData(byte[] data)

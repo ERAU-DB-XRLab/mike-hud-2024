@@ -6,14 +6,21 @@ using UnityEngine;
 
 public class MIKEMap : MonoBehaviour
 {
+    public static MIKEMap Main { get; private set; }
 
     private char[] alphabet = new char[] { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
 
     [SerializeField] private Transform mapStart, mapEnd, ignore;
+    [Space]
+    [SerializeField] private LayerMask mapLayer;
 
     void Awake()
     {
-        Debug.Log(GetPositionFromCode("V7"));
+        //Debug.Log(GetPositionFromCode("V7"));
+        if (Main == null)
+            Main = this;
+        else
+            Destroy(this);
     }
 
     public Vector3 GetPositionFromCode(string code)
@@ -60,9 +67,16 @@ public class MIKEMap : MonoBehaviour
     public Vector3 GetPositionFromNormalized(Vector2 normalizedPosition)
     {
         float x = Mathf.Lerp(mapStart.localPosition.x, mapEnd.localPosition.x, normalizedPosition.x);
+        float y = mapStart.position.y;
         float z = Mathf.Lerp(mapStart.localPosition.z, mapEnd.localPosition.z, normalizedPosition.y);
 
-        ignore.transform.localPosition = new Vector3(x, mapStart.position.y, z);
+        if (Physics.Raycast(new Vector3(x, mapStart.position.y + 10, z), Vector3.down, out RaycastHit hit, 100, mapLayer))
+        {
+            y = hit.point.y;
+        }
+
+        ignore.transform.localPosition = new Vector3(x, y, z);
         return ignore.transform.position;
     }
+
 }
