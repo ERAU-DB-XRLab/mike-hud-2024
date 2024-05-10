@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Linq;
 using System.Collections;
+using System.Collections.Concurrent;
 
 public class MIKEServerManager : MonoBehaviour
 {
@@ -15,41 +16,43 @@ public class MIKEServerManager : MonoBehaviour
     private Socket sock;
     private IPEndPoint endPoint;
 
-
     // Receiving
-    private Queue<byte[]> dataToReceive = new Queue<byte[]>();
+    private ConcurrentQueue<byte[]> dataToReceive = new ConcurrentQueue<byte[]>();
     private bool tasksRunning = true;
 
     private const int reliableSendCount = 30;
     private int reliableCounter = 0;
 
-    [SerializeField] private string otherIP;
     public string OtherIP { get { return otherIP; } set { otherIP = value; } }
+    [SerializeField] private string otherIP;
+    [SerializeField] private int sendPort = 7777;
+    [SerializeField] private int receivePort = 7777;
 
     // Start TCP server
     void Awake()
     {
-        Main = this;
+        if (Main == null)
+            Main = this;
+        else
+            Destroy(this);
 
         // Sending
-        sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram,
-        ProtocolType.Udp);
+        sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
         IPAddress otherAddress = IPAddress.Parse(otherIP);
-        endPoint = new IPEndPoint(otherAddress, 7777);
+        endPoint = new IPEndPoint(otherAddress, sendPort);
 
         // Receiving
-
         Task.Run(async () =>
         {
-            using (var udpClient = new UdpClient(7777))
+            using (var udpClient = new UdpClient(receivePort))
             {
                 while (tasksRunning)
                 {
                     //IPEndPoint object will allow us to read datagrams sent from any source.
                     var receivedResults = await udpClient.ReceiveAsync();
                     dataToReceive.Enqueue(receivedResults.Buffer);
-                    Debug.Log(receivedResults.Buffer.Length);
+                    Debug.Log("Length: " + receivedResults.Buffer.Length);
                 }
             }
         });
@@ -65,7 +68,8 @@ public class MIKEServerManager : MonoBehaviour
     {
         if (dataToReceive.Count > 0)
         {
-            MIKEInputManager.Main.ReceiveInput(dataToReceive.Dequeue());
+            Debug.Log("Data Received");
+            MIKEInputManager.Main.ReceiveInput(dataToReceive.TryDequeue(out byte[] data) ? data : null);
 
             if (dataToReceive.Count > 40)
             {
@@ -91,7 +95,6 @@ public class MIKEServerManager : MonoBehaviour
             dataAsList.RemoveRange(0, count);
 
             sock.SendTo(dataToSend.ToArray(), endPoint);
-            Debug.Log(dataToSend.Count);
 
             byteTotal -= count;
         }

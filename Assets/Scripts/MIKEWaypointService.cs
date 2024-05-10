@@ -19,19 +19,44 @@ public class MIKEWaypointService : MIKEService
 
     public override void ReceiveData(byte[] data)
     {
+        Debug.Log("Received Waypoint Data");
         List<byte> dataAsList = data.ToList();
 
-        // remove device ID byte
-        dataAsList.RemoveAt(0);
-        // remove reliability byte
-        dataAsList.RemoveAt(1);
+        // remove device ID byte and reliability byte
+        dataAsList.RemoveRange(0, 2);
+
+        // Parse waypoint ID
+        int waypointID = BitConverter.ToInt32(dataAsList.GetRange(0, 4).ToArray(), 0);
+        dataAsList.RemoveRange(0, 4);
+
+        // Parse waypoint action
+        char waypointAction = BitConverter.ToChar(dataAsList.GetRange(0, sizeof(char)).ToArray(), 0);
+        dataAsList.RemoveRange(0, sizeof(char));
+
+        if (waypointAction == 'D')
+        {
+            MIKEWaypointSpawner.Main.DeleteWaypoint(waypointID);
+            return;
+        }
 
         // Parse data
         float xPos = BitConverter.ToSingle(dataAsList.GetRange(0, 4).ToArray(), 0);
-        float yPos = BitConverter.ToSingle(dataAsList.GetRange(4, 4).ToArray(), 4);
-
+        float yPos = BitConverter.ToSingle(dataAsList.GetRange(4, 4).ToArray(), 0);
         Vector3 waypointPos = mainMap.GetPositionFromNormalized(new Vector2(xPos, yPos));
-        MIKEWaypointSpawner.Main.SpawnWaypoint(waypointPos);
-        
+
+        switch (waypointAction)
+        {
+            case 'C':
+                MIKEWaypointSpawner.Main.SpawnWaypoint(waypointID, waypointPos);
+                break;
+            case 'M':
+                MIKEWaypointSpawner.Main.MoveWaypoint(waypointID, waypointPos);
+                break;
+            default:
+                Debug.LogWarning("Invalid Waypoint Action");
+                break;
+        }
+        MIKEWaypointSpawner.Main.SpawnWaypoint(waypointID, waypointPos);
+
     }
 }

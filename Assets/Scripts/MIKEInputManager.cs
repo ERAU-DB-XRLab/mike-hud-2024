@@ -58,6 +58,11 @@ public class MIKEInputManager : MonoBehaviour
 
     public void ReceiveInput(byte[] data)
     {
+        if (data == null || data.Length == 0)
+        {
+            Debug.Log("Empty data received");
+            return;
+        }
 
         int id = data[0];
         Debug.Log("ID: " + id + " | Count: " + data.Length);

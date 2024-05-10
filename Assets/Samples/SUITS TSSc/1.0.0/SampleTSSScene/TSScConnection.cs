@@ -12,9 +12,9 @@ public class TSScConnection : MonoBehaviour
     string host;
     string port;
     string url;
-    int    team_number;
-    bool   connected;
-    float  time_since_last_update;
+    int team_number;
+    bool connected;
+    float time_since_last_update;
 
     // Database Jsons
     bool UIAUpdated;
@@ -68,7 +68,7 @@ public class TSScConnection : MonoBehaviour
             {
                 // Pull TSSc Updates
                 StartCoroutine(GetUIAState());
-                StartCoroutine(GetDCUState()); 
+                StartCoroutine(GetDCUState());
                 StartCoroutine(GetROVERState());
                 StartCoroutine(GetSPECState());
                 StartCoroutine(GetTELEMETRYState());
@@ -121,6 +121,7 @@ public class TSScConnection : MonoBehaviour
                     {
                         this.UIAUpdated = true;
                         this.UIAJsonString = webRequest.downloadHandler.text;
+                        //Debug.Log(this.UIAJsonString);
                     }
                     break;
             }
@@ -155,7 +156,7 @@ public class TSScConnection : MonoBehaviour
                     {
                         this.DCUUpdated = true;
                         this.DCUJsonString = webRequest.downloadHandler.text;
-                        Debug.Log(this.DCUJsonString);
+                        //Debug.Log(this.DCUJsonString);
                     }
                     break;
             }
@@ -190,7 +191,7 @@ public class TSScConnection : MonoBehaviour
                     {
                         this.ROVERUpdated = true;
                         this.ROVERJsonString = webRequest.downloadHandler.text;
-                        Debug.Log(this.ROVERJsonString);
+                        //Debug.Log(this.ROVERJsonString);
                     }
                     break;
             }
@@ -225,7 +226,7 @@ public class TSScConnection : MonoBehaviour
                     {
                         this.SPECUpdated = true;
                         this.SPECJsonString = webRequest.downloadHandler.text;
-                        Debug.Log(this.SPECJsonString);
+                        //Debug.Log(this.SPECJsonString);
                     }
                     break;
             }
@@ -260,7 +261,7 @@ public class TSScConnection : MonoBehaviour
                     {
                         this.TELEMETRYUpdated = true;
                         this.TELEMETRYJsonString = webRequest.downloadHandler.text;
-                        Debug.Log(this.TELEMETRYJsonString);
+                        //Debug.Log(this.TELEMETRYJsonString);
                     }
                     break;
             }
@@ -295,7 +296,7 @@ public class TSScConnection : MonoBehaviour
                     {
                         this.COMMUpdated = true;
                         this.COMMJsonString = webRequest.downloadHandler.text;
-                        Debug.Log(this.COMMJsonString);
+                        //Debug.Log(this.COMMJsonString);
                     }
                     break;
             }
@@ -330,7 +331,7 @@ public class TSScConnection : MonoBehaviour
                     {
                         this.IMUUpdated = true;
                         this.IMUJsonString = webRequest.downloadHandler.text;
-                        Debug.Log(this.IMUJsonString);
+                        //Debug.Log(this.IMUJsonString);
                     }
                     break;
             }

@@ -52,5 +52,5 @@
         "Temp/": true
     },
     "dotnet.preferCSharpExtension": true,
-    "dotnet.defaultSolution": "mike-hud-2024.sln"
+    "dotnet.defaultSolution": "MIKE-HUD-2024.sln"
 }
