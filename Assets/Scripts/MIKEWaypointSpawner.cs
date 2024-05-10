@@ -15,6 +15,9 @@ public class MIKEWaypointSpawner : MonoBehaviour
 
     private Dictionary<int, GameObject> waypoints = new Dictionary<int, GameObject>();
 
+    [Space]
+    [SerializeField] private bool TEMP = false;
+
     void Awake()
     {
         if (Main == null)
@@ -32,20 +35,19 @@ public class MIKEWaypointSpawner : MonoBehaviour
     public void SpawnWaypoint()
     {
         int waypointID = UnityEngine.Random.Range(0, 10000000);
-
-        List<byte> byteList = new List<byte>();
-        byteList.AddRange(BitConverter.GetBytes(waypointID));
-        byteList.Add((byte)'C');
-
-        Vector3 nPos = map.NormalizePosition(bodyOrigin.transform.position);
-        byteList.AddRange(BitConverter.GetBytes(nPos.x));
-        byteList.AddRange(BitConverter.GetBytes(nPos.y));
-
-        GameObject waypoint = Instantiate(waypointPrefab, map.GetPositionFromNormalized(nPos), Quaternion.identity);
+        Vector2 normalizedPos = map.NormalizePosition(map.transform.InverseTransformPoint(bodyOrigin.transform.position));
+        GameObject waypoint = Instantiate(waypointPrefab, map.GetPositionFromNormalized(normalizedPos), Quaternion.identity);
         waypoint.transform.SetParent(map.transform);
-
         waypoints.Add(waypointID, waypoint);
-        MIKEServerManager.Main.SendDataReliably(ServiceType.Waypoint, byteList.ToArray());
+        AngleWaypoint(waypoint);
+
+        // SEND TO LMCC
+        var packet = new MIKEPacket();
+        packet.Write((int)WaypointServiceType.Create);
+        packet.Write(waypointID);
+        packet.Write(normalizedPos.x);
+        packet.Write(normalizedPos.y);
+        MIKEServerManager.Main.SendDataReliably(ServiceType.Waypoint, packet);
     }
 
     public void SpawnWaypoint(int waypointID, Vector3 pos)
@@ -54,11 +56,13 @@ public class MIKEWaypointSpawner : MonoBehaviour
         waypoint.transform.SetParent(map.transform);
 
         waypoints.Add(waypointID, waypoint);
+        AngleWaypoint(waypoint);
     }
 
     public void MoveWaypoint(int waypointID, Vector3 waypointPos)
     {
         waypoints[waypointID].transform.position = waypointPos;
+        AngleWaypoint(waypoints[waypointID]);
     }
 
     public void DeleteWaypoint(int waypointID)
@@ -67,12 +71,21 @@ public class MIKEWaypointSpawner : MonoBehaviour
         waypoints.Remove(waypointID);
     }
 
+    private void AngleWaypoint(GameObject waypoint)
+    {
+        if (Physics.Raycast(waypoint.transform.position + Vector3.up * 500, Vector3.down, out RaycastHit hit, 1000, LayerMask.GetMask("Map")))
+        {
+            waypoint.transform.GetChild(1).transform.rotation = Quaternion.LookRotation(hit.normal);
+        }
+    }
+
     // FOR TESTING
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && !TEMP)
         {
             SpawnWaypoint();
+            TEMP = true;
         }
     }
 }

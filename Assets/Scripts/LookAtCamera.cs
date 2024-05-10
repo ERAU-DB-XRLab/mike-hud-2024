@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class LookAtCamera : MonoBehaviour
 {
-
+    [SerializeField] private bool ignoreY = false;
     private Transform mainCamera;
 
     // Start is called before the first frame update
@@ -16,6 +16,13 @@ public class LookAtCamera : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.forward = transform.position - mainCamera.position;
+        if (ignoreY)
+        {
+            transform.forward = Vector3.ProjectOnPlane(transform.position - mainCamera.position, Vector3.up);
+        }
+        else
+        {
+            transform.forward = transform.position - mainCamera.position;
+        }
     }
 }

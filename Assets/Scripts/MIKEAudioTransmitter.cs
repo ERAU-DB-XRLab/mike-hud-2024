@@ -13,7 +13,7 @@ public class MIKEAudioTransmitter : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -46,6 +46,7 @@ public class MIKEAudioTransmitter : MonoBehaviour
         byte[] byteArray = new byte[audioData.Length * 4];
         Buffer.BlockCopy(audioData, 0, byteArray, 0, byteArray.Length);
         Debug.Log("Sending sample count: " + audioData.Length);
-        MIKEServerManager.Main.SendData(ServiceType.Audio, byteArray);
+        var packet = new MIKEPacket(byteArray);
+        MIKEServerManager.Main.SendData(ServiceType.Audio, packet);
     }
 }

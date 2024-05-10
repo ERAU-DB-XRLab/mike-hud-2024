@@ -11,7 +11,7 @@ public class MIKELMCCAudioService : MIKEService
 
     // Packet data
     private bool parsing = false;
-    private int packetsParsed = 0;
+    //private int packetsParsed = 0;
     private List<byte> mainData = new List<byte>();
     private float firstPacketTime;
 
@@ -21,21 +21,15 @@ public class MIKELMCCAudioService : MIKEService
         MIKEInputManager.Main.RegisterService(ServiceType.Audio, this);
     }
 
-    public override void ReceiveData(byte[] data)
+    public override void ReceiveData(MIKEPacket packet)
     {
-
-        List<byte> dataAsList = data.ToList();
-
-        // remove device ID byte
-        dataAsList.RemoveAt(0);
-
         if (!parsing)
         {
             parsing = true;
             firstPacketTime = Time.realtimeSinceStartup;
         }
 
-        mainData.AddRange(dataAsList);
+        mainData.AddRange(packet.UnreadByteArray);
 
         //if (packetsParsed >= packetCount)
         //{
@@ -60,7 +54,7 @@ public class MIKELMCCAudioService : MIKEService
     public void ResetData()
     {
         mainData.Clear();
-        packetsParsed = 0;
+        //packetsParsed = 0;
         parsing = false;
     }
 

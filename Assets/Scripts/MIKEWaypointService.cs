@@ -3,6 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+public enum WaypointServiceType
+{
+    Create = 0,
+    Move = 1,
+    Delete = 2
+}
 
 public class MIKEWaypointService : MIKEService
 {
@@ -17,46 +23,37 @@ public class MIKEWaypointService : MIKEService
         MIKEInputManager.Main.RegisterService(Service, this);
     }
 
-    public override void ReceiveData(byte[] data)
+    public override void ReceiveData(MIKEPacket packet)
     {
-        Debug.Log("Received Waypoint Data");
-        List<byte> dataAsList = data.ToList();
-
-        // remove device ID byte and reliability byte
-        dataAsList.RemoveRange(0, 2);
+        // Parse waypoint action
+        int serviceType = packet.ReadInt();
 
         // Parse waypoint ID
-        int waypointID = BitConverter.ToInt32(dataAsList.GetRange(0, 4).ToArray(), 0);
-        dataAsList.RemoveRange(0, 4);
+        int waypointID = packet.ReadInt();
 
-        // Parse waypoint action
-        char waypointAction = BitConverter.ToChar(dataAsList.GetRange(0, sizeof(char)).ToArray(), 0);
-        dataAsList.RemoveRange(0, sizeof(char));
-
-        if (waypointAction == 'D')
+        if (serviceType == (int)WaypointServiceType.Delete)
         {
             MIKEWaypointSpawner.Main.DeleteWaypoint(waypointID);
-            return;
         }
-
-        // Parse data
-        float xPos = BitConverter.ToSingle(dataAsList.GetRange(0, 4).ToArray(), 0);
-        float yPos = BitConverter.ToSingle(dataAsList.GetRange(4, 4).ToArray(), 0);
-        Vector3 waypointPos = mainMap.GetPositionFromNormalized(new Vector2(xPos, yPos));
-
-        switch (waypointAction)
+        else
         {
-            case 'C':
-                MIKEWaypointSpawner.Main.SpawnWaypoint(waypointID, waypointPos);
-                break;
-            case 'M':
-                MIKEWaypointSpawner.Main.MoveWaypoint(waypointID, waypointPos);
-                break;
-            default:
-                Debug.LogWarning("Invalid Waypoint Action");
-                break;
-        }
-        MIKEWaypointSpawner.Main.SpawnWaypoint(waypointID, waypointPos);
+            // Parse data
+            float xPos = packet.ReadFloat();
+            float yPos = packet.ReadFloat();
+            Vector3 waypointPos = mainMap.GetPositionFromNormalized(new Vector2(xPos, yPos));
 
+            switch (serviceType)
+            {
+                case (int)WaypointServiceType.Create:
+                    MIKEWaypointSpawner.Main.SpawnWaypoint(waypointID, waypointPos);
+                    break;
+                case (int)WaypointServiceType.Move:
+                    MIKEWaypointSpawner.Main.MoveWaypoint(waypointID, waypointPos);
+                    break;
+                default:
+                    Debug.LogError("MIKEWaypointService: Invalid waypoint service type");
+                    break;
+            }
+        }
     }
 }

@@ -9,9 +9,6 @@ public class MIKEInputManager : MonoBehaviour
 
     public static MIKEInputManager Main { get; private set; }
 
-    // INPUTS
-    //public UnityEvent Select;
-
     // DEVICE REGISTRATION
 
     [SerializeField] private Transform devicesParent;
@@ -20,13 +17,24 @@ public class MIKEInputManager : MonoBehaviour
 
     // Input devices
     private Dictionary<int, MIKEInputDeviceEntry> inputDeviceEntries = new Dictionary<int, MIKEInputDeviceEntry>();
+
+    // SERVICES
     private Dictionary<int, MIKEService> services = new Dictionary<int, MIKEService>();
 
     private int otherReliableCounter = 0;
 
     void Awake()
     {
-        Main = this;
+        if (Main == null)
+            Main = this;
+        else
+            Destroy(this);
+
+        GenerateDevices();
+    }
+
+    private void GenerateDevices()
+    {
         deviceType.Add(0, "Console");
         deviceType.Add(2, "Camera");
         deviceType.Add(4, "LMCC");
@@ -65,33 +73,29 @@ public class MIKEInputManager : MonoBehaviour
         }
 
         int id = data[0];
-        Debug.Log("ID: " + id + " | Count: " + data.Length);
 
         // First check if it's a service
         if (services.ContainsKey(id))
         {
+            var packet = new MIKEPacket(data);
+            packet.CurrentIndex++;
             if (services[id].IsReliable)
             {
-                int rc = data[1];
+                int rc = packet.ReadInt();
                 if (rc > otherReliableCounter)
                 {
                     otherReliableCounter = rc;
-                    services[id].ReceiveData(data);
+                    services[id].ReceiveData(packet);
                 }
             }
             else
             {
-                services[id].ReceiveData(data);
+                services[id].ReceiveData(packet);
             }
             return;
         }
-        else
-        {
-            Debug.Log("Service " + id + " not found");
-        }
 
         // If not a service, then handle it as an input device
-
         if (!inputDeviceEntries.ContainsKey(id) && deviceType.ContainsKey(id))
         {
             RegisterInputDevice(id);
@@ -118,7 +122,5 @@ public class MIKEInputManager : MonoBehaviour
         }
 
         exception.transform.SetAsFirstSibling();
-
     }
-
 }

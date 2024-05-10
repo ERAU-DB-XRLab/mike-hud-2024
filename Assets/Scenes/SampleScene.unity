@@ -4468,6 +4468,8 @@ MonoBehaviour:
   waypointPrefab: {fileID: 6740120451933133778, guid: f2ce9b4fdb698854c9ed6afa450eb2d6,
     type: 3}
   map: {fileID: 974679813}
+  bodyOrigin: {fileID: 1358310902}
+  TEMP: 0
 --- !u!1001 &927318082
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12915,6 +12917,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cbb17503737fe944973f535091d3b8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ignoreY: 0
 --- !u!114 &2139178228
 MonoBehaviour:
   m_ObjectHideFlags: 0

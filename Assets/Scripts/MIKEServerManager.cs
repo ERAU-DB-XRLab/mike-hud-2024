@@ -17,10 +17,12 @@ public class MIKEServerManager : MonoBehaviour
     private IPEndPoint endPoint;
 
     // Receiving
+    private UdpClient udpClient;
     private ConcurrentQueue<byte[]> dataToReceive = new ConcurrentQueue<byte[]>();
     private bool tasksRunning = true;
 
     private const int reliableSendCount = 30;
+    private const float reliableSendInterval = 0.1f;
     private int reliableCounter = 0;
 
     public string OtherIP { get { return otherIP; } set { otherIP = value; } }
@@ -28,7 +30,7 @@ public class MIKEServerManager : MonoBehaviour
     [SerializeField] private int sendPort = 7777;
     [SerializeField] private int receivePort = 7777;
 
-    // Start TCP server
+    // Start UDP server
     void Awake()
     {
         if (Main == null)
@@ -41,44 +43,91 @@ public class MIKEServerManager : MonoBehaviour
 
         IPAddress otherAddress = IPAddress.Parse(otherIP);
         endPoint = new IPEndPoint(otherAddress, sendPort);
+        udpClient = new UdpClient(receivePort);
+        ReceiveData();
 
         // Receiving
-        Task.Run(async () =>
+        /*Task.Run(async () =>
         {
             using (var udpClient = new UdpClient(receivePort))
             {
                 while (tasksRunning)
                 {
-                    //IPEndPoint object will allow us to read datagrams sent from any source.
                     var receivedResults = await udpClient.ReceiveAsync();
                     dataToReceive.Enqueue(receivedResults.Buffer);
                     Debug.Log("Length: " + receivedResults.Buffer.Length);
                 }
             }
-        });
+        });*/
+    }
+
+    private async void ReceiveData()
+    {
+        while (tasksRunning)
+        {
+            //Debug.Log("Waiting for data...");
+            var receivedResults = await udpClient.ReceiveAsync();
+            dataToReceive.Enqueue(receivedResults.Buffer);
+            //await Task.Delay(100);
+            //Debug.Log("Length: " + receivedResults.Buffer.Length);
+        }
     }
 
     void OnDisable()
     {
         tasksRunning = false;
+        udpClient.Close();
         Debug.Log("Server stopped.");
     }
 
     void Update()
     {
+        Debug.Log("Data Count: " + dataToReceive.Count);
         if (dataToReceive.Count > 0)
         {
-            Debug.Log("Data Received");
             MIKEInputManager.Main.ReceiveInput(dataToReceive.TryDequeue(out byte[] data) ? data : null);
 
             if (dataToReceive.Count > 40)
             {
-                dataToReceive.Clear(); // POTENTIAL ISSUE/RACE CONDITION HERE, IF DATA IS ENQUEUED IN THE TASK ABOVE AND THEN CLEARED HERE DATA WILL BE LOST. NEEDS TO BE TESTED
+                dataToReceive.Clear();
             }
         }
     }
 
-    public void SendData(ServiceType type, byte[] data)
+    public void SendData(ServiceType type, MIKEPacket packet, bool insertServiceType = true)
+    {
+        if (insertServiceType)
+            packet.InsertAtStart((byte)((int)type));
+        sock.SendTo(packet.ByteArray, endPoint);
+
+        //while (packet.UnreadLength > 0)
+        //{
+        //    int count = packet.UnreadLength >= maxPacketSize ? maxPacketSize : packet.UnreadLength;
+        //    sock.SendTo(packet.ReadBytes(count), endPoint);
+        //}
+    }
+
+    public void SendDataReliably(ServiceType type, MIKEPacket packet)
+    {
+        reliableCounter++;
+        packet.InsertAtStart(reliableCounter);
+        packet.InsertAtStart((byte)((int)type));
+        StartCoroutine(SendDataCoroutine(type, packet));
+    }
+
+    // Sends the packet multiple times to make sure it is received, I know this is stupid but I simply don't give a shit
+    private IEnumerator SendDataCoroutine(ServiceType type, MIKEPacket packet)
+    {
+        int count = 0;
+        while (count < reliableSendCount)
+        {
+            SendData(type, packet, false);
+            count++;
+            yield return new WaitForSeconds(reliableSendInterval);
+        }
+    }
+
+    /*public void SendData(ServiceType type, byte[] data)
     {
         int serviceID = (int)type;
         int packetSize = 65000;
@@ -117,7 +166,7 @@ public class MIKEServerManager : MonoBehaviour
         {
             SendData(type, data);
             count++;
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(reliableSendInterval);
         }
-    }
+    }*/
 }
