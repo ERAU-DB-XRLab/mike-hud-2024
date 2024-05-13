@@ -22,6 +22,7 @@ public class MIKEInputManager : MonoBehaviour
     private Dictionary<int, MIKEService> services = new Dictionary<int, MIKEService>();
 
     private int otherReliableCounter = 0;
+    private int reliablePacketCount;
 
     void Awake()
     {
@@ -84,8 +85,22 @@ public class MIKEInputManager : MonoBehaviour
                 int rc = packet.ReadInt();
                 if (rc > otherReliableCounter)
                 {
+                    reliablePacketCount = 1;
                     otherReliableCounter = rc;
                     services[id].ReceiveData(packet);
+                }
+                else if (rc == otherReliableCounter)
+                {
+                    reliablePacketCount++;
+                }
+                else
+                {
+                    Debug.LogWarning("Received an old reliable packet with rc: " + rc);
+                }
+
+                if (reliablePacketCount == MIKEServerManager.Main.ReliableSendCount)
+                {
+                    Debug.Log("No reliable packets lost!");
                 }
             }
             else

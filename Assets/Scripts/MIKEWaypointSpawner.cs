@@ -47,7 +47,7 @@ public class MIKEWaypointSpawner : MonoBehaviour
         packet.Write(waypointID);
         packet.Write(normalizedPos.x);
         packet.Write(normalizedPos.y);
-        MIKEServerManager.Main.SendDataReliably(ServiceType.Waypoint, packet);
+        MIKEServerManager.Main.SendData(ServiceType.Waypoint, packet, DeliveryType.Reliable);
     }
 
     public void SpawnWaypoint(int waypointID, Vector3 pos)
@@ -73,7 +73,7 @@ public class MIKEWaypointSpawner : MonoBehaviour
 
     private void AngleWaypoint(GameObject waypoint)
     {
-        if (Physics.Raycast(waypoint.transform.position + Vector3.up * 500, Vector3.down, out RaycastHit hit, 1000, LayerMask.GetMask("Map")))
+        if (map.IsPositionOnMap(waypoint.transform.position, out RaycastHit hit))
         {
             waypoint.transform.GetChild(1).transform.rotation = Quaternion.LookRotation(hit.normal);
         }

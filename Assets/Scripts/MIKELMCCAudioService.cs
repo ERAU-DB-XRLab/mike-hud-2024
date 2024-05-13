@@ -18,7 +18,9 @@ public class MIKELMCCAudioService : MIKEService
 
     void Start()
     {
-        MIKEInputManager.Main.RegisterService(ServiceType.Audio, this);
+        Service = ServiceType.Audio;
+        IsReliable = false;
+        MIKEInputManager.Main.RegisterService(Service, this);
     }
 
     public override void ReceiveData(MIKEPacket packet)

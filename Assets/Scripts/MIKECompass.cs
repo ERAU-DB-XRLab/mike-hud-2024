@@ -21,11 +21,11 @@ public class MIKECompass : MonoBehaviour
 
     public void UpdateIMU(IMUData data)
     {
-        Debug.Log("Heading: " + data.heading);
+        Debug.Log("Heading: " + data.YourEVA.heading);
         Vector3 forward = bodyOrigin.forward;
         forward.y = 0;
         transform.rotation = Quaternion.LookRotation(forward, Vector3.up);
-        transform.Rotate(Vector3.up, (float) -data.heading);
+        transform.Rotate(Vector3.up, (float)-data.YourEVA.heading);
     }
 
 }

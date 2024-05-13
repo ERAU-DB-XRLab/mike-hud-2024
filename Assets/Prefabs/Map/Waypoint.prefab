@@ -369,9 +369,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b1ab5735e5ed9840ab08b32dac1c8c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hoverHeight: 3.59
+  hoverHeight: 5
   bounce: 1
-  bounceDist: 0.16
+  bounceDist: 1
   bounceFreq: 1
 --- !u!1 &6740120451933133778
 GameObject:

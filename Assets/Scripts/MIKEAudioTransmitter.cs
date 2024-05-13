@@ -47,6 +47,6 @@ public class MIKEAudioTransmitter : MonoBehaviour
         Buffer.BlockCopy(audioData, 0, byteArray, 0, byteArray.Length);
         Debug.Log("Sending sample count: " + audioData.Length);
         var packet = new MIKEPacket(byteArray);
-        MIKEServerManager.Main.SendData(ServiceType.Audio, packet);
+        MIKEServerManager.Main.SendData(ServiceType.Audio, packet, DeliveryType.Unreliable);
     }
 }
