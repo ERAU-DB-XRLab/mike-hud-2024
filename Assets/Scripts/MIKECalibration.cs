@@ -19,7 +19,7 @@ public class MIKECalibration : MonoBehaviour
 
     private void UpdateIMU(IMUData data)
     {
-        astronautPosition = map.GetPositionFromUTM(data.OtherEVA.posx, data.OtherEVA.posy, false);
+        astronautPosition = map.GetPositionFromUTM(data.YourEVA.posx, data.YourEVA.posy, false);
         astronautHeading = (float)data.YourEVA.heading;
     }
 
