@@ -15,8 +15,9 @@ public class MIKEWaypointSpawner : MonoBehaviour
 
     private Dictionary<int, GameObject> waypoints = new Dictionary<int, GameObject>();
 
-    [Space]
-    [SerializeField] private bool TEMP = false;
+    [Header("DEBUG")]
+    [SerializeField] private bool debugMode = false;
+    [SerializeField] private KeyCode spawnKey = KeyCode.Space;
 
     void Awake()
     {
@@ -82,10 +83,12 @@ public class MIKEWaypointSpawner : MonoBehaviour
     // FOR TESTING
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && !TEMP)
+        if (debugMode)
         {
-            SpawnWaypoint();
-            TEMP = true;
+            if (Input.GetKeyDown(spawnKey))
+            {
+                SpawnWaypoint();
+            }
         }
     }
 }

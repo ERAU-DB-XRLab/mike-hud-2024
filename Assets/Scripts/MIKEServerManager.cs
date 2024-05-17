@@ -90,7 +90,7 @@ public class MIKEServerManager : MonoBehaviour
                 byte[] data = segBuffer.Slice(0, receivedResults).ToArray();
                 dataToReceive.Enqueue(data);
 
-                Debug.Log("Length: " + data.Length);
+                //Debug.Log("Length: " + data.Length);
             }
             catch (ObjectDisposedException)
             {
