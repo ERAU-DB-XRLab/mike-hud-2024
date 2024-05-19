@@ -8,7 +8,7 @@ public class MIKEExpandingWidget : MIKEWidget
     private Vector3 defaultScale;
     private MaskableGraphic[] graphics;
 
-    new void Awake()
+    protected new void Awake()
     {
         base.Awake();
         defaultScale = transform.localScale;
