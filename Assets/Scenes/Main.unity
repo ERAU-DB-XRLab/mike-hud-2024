@@ -4081,9 +4081,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc6f267074d5e6542918179efd552531, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  waypointPrefab: {fileID: 6740120451933133778, guid: f2ce9b4fdb698854c9ed6afa450eb2d6,
+  waypointPrefab: {fileID: 6740120451933133778, guid: f17b4ab1b9c01ea438cac4bb7049c148,
     type: 3}
-  lmccWaypointPrefab: {fileID: 0}
+  lmccWaypointPrefab: {fileID: 6740120451933133778, guid: f2ce9b4fdb698854c9ed6afa450eb2d6,
+    type: 3}
   map: {fileID: 974679813}
   bodyOrigin: {fileID: 1358310902}
   debugMode: 1
