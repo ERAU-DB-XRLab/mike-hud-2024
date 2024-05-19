@@ -63,7 +63,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 059fb1c7d04306d458bf3e052ba957ed, type: 2}
+  - {fileID: 2100000, guid: 1717b1f75cfb02f4eaef266492861422, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -160,7 +160,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 059fb1c7d04306d458bf3e052ba957ed, type: 2}
+  - {fileID: 2100000, guid: 1717b1f75cfb02f4eaef266492861422, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -262,7 +262,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'HUD:'
+  m_text: 'LMCC:'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9e0c6e5b9ac9d9e4ca60e7fdc663533a, type: 2}
   m_sharedMaterial: {fileID: 6439674621083302702, guid: 9e0c6e5b9ac9d9e4ca60e7fdc663533a,
@@ -486,7 +486,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 059fb1c7d04306d458bf3e052ba957ed, type: 2}
+  - {fileID: 2100000, guid: 1717b1f75cfb02f4eaef266492861422, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -638,7 +638,7 @@ GameObject:
   - component: {fileID: 5125595869902035789}
   - component: {fileID: 7923593448085307743}
   m_Layer: 0
-  m_Name: Waypoint
+  m_Name: LMCCWaypoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

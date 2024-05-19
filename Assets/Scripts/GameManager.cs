@@ -13,12 +13,6 @@ public class GameManager : MonoBehaviour
         StartCoroutine(StartApplication());
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     private IEnumerator StartApplication()
     {
         intro.Play();

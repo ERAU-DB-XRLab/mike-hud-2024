@@ -42,13 +42,15 @@ public class MIKEWaypointService : MIKEService
             float yPos = packet.ReadFloat();
             Vector3 waypointPos = mainMap.GetPositionFromNormalized(new Vector2(xPos, yPos));
 
+            int waypointNum = packet.ReadInt();
+
             switch (serviceType)
             {
                 case (int)WaypointServiceType.Create:
-                    MIKEWaypointSpawner.Main.SpawnWaypoint(waypointID, waypointPos);
+                    MIKEWaypointSpawner.Main.SpawnLMCCWaypoint(waypointID, waypointNum, waypointPos);
                     break;
                 case (int)WaypointServiceType.Move:
-                    MIKEWaypointSpawner.Main.MoveWaypoint(waypointID, waypointPos);
+                    MIKEWaypointSpawner.Main.MoveLMCCWaypoint(waypointID, waypointPos);
                     break;
                 default:
                     Debug.LogError("MIKEWaypointService: Invalid waypoint service type");

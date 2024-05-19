@@ -4,17 +4,46 @@ using UnityEngine;
 using TMPro;
 public class MIKEWidgetValue : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI text;
-    [SerializeField] private string units;
+    [SerializeField] protected string units;
 
-    public void SetValue(float value)
+    protected TextMeshProUGUI text;
+    protected string fieldText;
+
+    // Start is called before the first frame update
+    protected virtual void Awake()
     {
-        text.SetText(value.ToString("0.00") + "    [" + units + "]");
+        InitText();
     }
 
-    public void SetValue(bool value)
+    protected virtual void InitText()
     {
-        text.SetText(value ? "<color=green>" : "<color=red>" + value.ToString());
+        text = GetComponent<TextMeshProUGUI>();
+        fieldText = text.text;
     }
 
+    public virtual void SetValue(float value)
+    {
+        text.SetText(fieldText + " " + value.ToString() + " " + units);
+    }
+
+    public virtual void SetValue(float value, Color color)
+    {
+        text.SetText(fieldText + " <color=#" + ColorUtility.ToHtmlStringRGB(color) + ">" + value.ToString() + " " + units);
+    }
+
+    public virtual void SetValue(string value)
+    {
+        text.SetText(fieldText + " " + value);
+    }
+
+    public virtual void SetValue(string value, Color color)
+    {
+        text.SetText(fieldText + " <color=#" + ColorUtility.ToHtmlStringRGB(color) + ">" + value);
+    }
+
+    public virtual void SetValue(bool value)
+    {
+        string colorHex = ColorUtility.ToHtmlStringRGB(value ? MIKEResources.Main.PositiveNotificationColor : MIKEResources.Main.NegativeNotificationColor);
+        text.SetText(fieldText + " <color=#" + ColorUtility.ToHtmlStringRGB(value ? MIKEResources.Main.PositiveNotificationColor : MIKEResources.Main.NegativeNotificationColor) + ">" + value.ToString());
+    }
 }

@@ -5,13 +5,17 @@ using UnityEngine;
 
 public class MIKETrackedObjectSpawner : MonoBehaviour
 {
+    public static MIKETrackedObjectSpawner Main { get; private set; }
+
     [SerializeField] private MIKEMap map;
     [SerializeField] private GameObject otherAstronautPrefab;
     [SerializeField] private GameObject roverPrefab;
     [Space]
     [SerializeField] private float interpolationSpeed = 5f;
 
+    public MIKEWaypoint OtherAstronaut { get => currOtherAstronaut.GetComponent<MIKEWaypoint>(); }
     private GameObject currOtherAstronaut;
+    public MIKEWaypoint Rover { get => currRover.GetComponent<MIKEWaypoint>(); }
     private GameObject currRover;
 
     private Vector3 otherAstronautNewLocalPosition;
@@ -19,6 +23,14 @@ public class MIKETrackedObjectSpawner : MonoBehaviour
 
     private Vector3 roverNewLocalPosition;
     private Quaternion roverNewLocalRotation;
+
+    void Awake()
+    {
+        if (Main == null)
+            Main = this;
+        else
+            Destroy(this);
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -34,6 +46,7 @@ public class MIKETrackedObjectSpawner : MonoBehaviour
         if (currOtherAstronaut == null)
         {
             currOtherAstronaut = Instantiate(otherAstronautPrefab, map.transform);
+            currOtherAstronaut.GetComponent<MIKEWaypoint>().WaypointText.SetValue("Other Astronaut");
         }
 
         Vector3 newPos = map.GetPositionFromUTM(data.OtherEVA.posx, data.OtherEVA.posy, true);
@@ -46,6 +59,7 @@ public class MIKETrackedObjectSpawner : MonoBehaviour
         if (currRover == null)
         {
             currRover = Instantiate(roverPrefab, map.transform);
+            currRover.GetComponent<MIKEWaypoint>().WaypointText.SetValue("Rover");
         }
 
         Vector3 newPos = map.GetPositionFromUTM(data.posx, data.posy, true);

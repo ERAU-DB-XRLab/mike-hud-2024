@@ -93,6 +93,8 @@ public class MIKEAudioTransmitter : MonoBehaviour
         }
 
         MIKEServerManager.Main.SendData(ServiceType.Audio, packet, DeliveryType.Unreliable);
+
+        MIKENotificationManager.Main.SendNotification("NOTIFICATION", "Audio message sent", MIKEResources.Main.PositiveNotificationColor, 5f);
     }
 
     public void SendData()

@@ -6,14 +6,16 @@ using UnityEngine;
 
 public class MIKEWaypointSpawner : MonoBehaviour
 {
-
-    public static MIKEWaypointSpawner Main;
+    public static MIKEWaypointSpawner Main { get; private set; }
 
     [SerializeField] private GameObject waypointPrefab;
+    [SerializeField] private GameObject lmccWaypointPrefab;
     [SerializeField] private MIKEMap map;
     [SerializeField] private GameObject bodyOrigin;
 
-    private Dictionary<int, GameObject> waypoints = new Dictionary<int, GameObject>();
+    public int HUDWaypointCount { get; private set; } = 0;
+    public Dictionary<int, MIKEWaypoint> Waypoints { get => waypoints; }
+    private Dictionary<int, MIKEWaypoint> waypoints;
 
     [Header("DEBUG")]
     [SerializeField] private bool debugMode = false;
@@ -30,7 +32,7 @@ public class MIKEWaypointSpawner : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        waypoints = new Dictionary<int, GameObject>();
+        waypoints = new Dictionary<int, MIKEWaypoint>();
     }
 
     public void SpawnWaypoint()
@@ -39,7 +41,7 @@ public class MIKEWaypointSpawner : MonoBehaviour
         Vector2 normalizedPos = map.NormalizePosition(map.transform.InverseTransformPoint(bodyOrigin.transform.position));
         GameObject waypoint = Instantiate(waypointPrefab, map.GetPositionFromNormalized(normalizedPos), Quaternion.identity);
         waypoint.transform.SetParent(map.transform);
-        waypoints.Add(waypointID, waypoint);
+        waypoints.Add(waypointID, waypoint.GetComponent<MIKEWaypoint>());
         AngleWaypoint(waypoint);
 
         // SEND TO LMCC
@@ -48,27 +50,37 @@ public class MIKEWaypointSpawner : MonoBehaviour
         packet.Write(waypointID);
         packet.Write(normalizedPos.x);
         packet.Write(normalizedPos.y);
+        packet.Write(++HUDWaypointCount);
+
+        waypoints[waypointID].WaypointID = waypointID;
+        waypoints[waypointID].WaypointNumber = "HUD " + HUDWaypointCount.ToString();
+        waypoints[waypointID].WaypointText.SetValue(HUDWaypointCount.ToString());
+
         MIKEServerManager.Main.SendData(ServiceType.Waypoint, packet, DeliveryType.Reliable);
     }
 
-    public void SpawnWaypoint(int waypointID, Vector3 pos)
+    public void SpawnLMCCWaypoint(int waypointID, int waypointNum, Vector3 pos)
     {
-        GameObject waypoint = Instantiate(waypointPrefab, pos, Quaternion.identity);
+        GameObject waypoint = Instantiate(lmccWaypointPrefab, pos, Quaternion.identity);
         waypoint.transform.SetParent(map.transform);
 
-        waypoints.Add(waypointID, waypoint);
+        waypoints.Add(waypointID, waypoint.GetComponent<MIKEWaypoint>());
         AngleWaypoint(waypoint);
+
+        waypoints[waypointID].WaypointID = waypointID;
+        waypoints[waypointID].WaypointNumber = "LMCC " + waypointNum.ToString();
+        waypoints[waypointID].WaypointText.SetValue(waypointNum.ToString());
     }
 
-    public void MoveWaypoint(int waypointID, Vector3 waypointPos)
+    public void MoveLMCCWaypoint(int waypointID, Vector3 waypointPos)
     {
         waypoints[waypointID].transform.position = waypointPos;
-        AngleWaypoint(waypoints[waypointID]);
+        AngleWaypoint(waypoints[waypointID].gameObject);
     }
 
     public void DeleteWaypoint(int waypointID)
     {
-        Destroy(waypoints[waypointID]);
+        Destroy(waypoints[waypointID].gameObject);
         waypoints.Remove(waypointID);
     }
 
