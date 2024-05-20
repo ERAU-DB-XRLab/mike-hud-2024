@@ -46,12 +46,13 @@ public class MIKETrackedObjectSpawner : MonoBehaviour
         if (currOtherAstronaut == null)
         {
             currOtherAstronaut = Instantiate(otherAstronautPrefab, map.transform);
-            currOtherAstronaut.GetComponent<MIKEWaypoint>().WaypointText.SetValue("Other Astronaut");
+            //currOtherAstronaut.GetComponent<MIKEWaypoint>().WaypointText.SetValue("Other Astronaut");
         }
 
-        Vector3 newPos = map.GetPositionFromUTM(data.OtherEVA.posx, data.OtherEVA.posy, true);
+        Vector3 newPos = map.GetPositionFromUTM(298355, 3272383, true);
         otherAstronautNewLocalRotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(newPos - otherAstronautNewLocalPosition, Vector3.up));
         otherAstronautNewLocalPosition = newPos;
+        MIKENavigationManager.Main.SetDesiredPosition(map.transform.TransformPoint(newPos));
     }
 
     private void UpdateRover(RoverData data)
@@ -59,7 +60,7 @@ public class MIKETrackedObjectSpawner : MonoBehaviour
         if (currRover == null)
         {
             currRover = Instantiate(roverPrefab, map.transform);
-            currRover.GetComponent<MIKEWaypoint>().WaypointText.SetValue("Rover");
+            //currRover.GetComponent<MIKEWaypoint>().WaypointText.SetValue("Rover");
         }
 
         Vector3 newPos = map.GetPositionFromUTM(data.posx, data.posy, true);

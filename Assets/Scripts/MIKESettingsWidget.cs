@@ -13,6 +13,10 @@ public class MIKESettingsWidget : MIKEExpandingWidget
     protected new void Awake()
     {
         base.Awake();
+    }
+
+    void Start()
+    {
         if (PlayerPrefs.HasKey("TSS-IP"))
         {
             tss.text = PlayerPrefs.GetString("TSS-IP");

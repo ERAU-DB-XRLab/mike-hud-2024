@@ -15,14 +15,14 @@ public class MIKEMapNavigationWidget : MIKEWidget
 
     void Update()
     {
-        desiredRot = rotating ? new Vector3(mapRot3D.x, 0, mapRotate.transform.eulerAngles.z) : mapRot2D;
-        mapRotate.transform.rotation = Quaternion.RotateTowards(mapRotate.transform.rotation, rotating ? Quaternion.Euler(mapRot3D) : Quaternion.Euler(desiredRot), rotationSpeed * Time.deltaTime);
+        //desiredRot = rotating ? new Vector3(mapRot3D.x, 0, mapRotate.transform.eulerAngles.z) : mapRot2D;
+        //mapRotate.transform.rotation = Quaternion.RotateTowards(mapRotate.transform.rotation, rotating ? Quaternion.Euler(mapRot3D) : Quaternion.Euler(desiredRot), rotationSpeed * Time.deltaTime);
     }
 
     public void ToggleMap()
     {
-        rotating = !rotating;
-        mapRotate.enabled = rotating;
+        //rotating = !rotating;
+        //mapRotate.enabled = rotating;
     }
 
 }

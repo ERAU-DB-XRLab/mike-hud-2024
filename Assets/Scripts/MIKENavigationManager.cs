@@ -7,15 +7,24 @@ using UnityEngine.AI;
 public class MIKENavigationManager : MonoBehaviour
 {
 
+    public static MIKENavigationManager Main { get; private set; }
+
     [SerializeField] private MIKEMap map;
     [SerializeField] private NavMeshAgent player;
     [SerializeField] private LineRenderer r;
 
     private bool pathActive;
 
-    public void SetDesiredPosition(Vector2 normalizedPos)
+    void Awake()
     {
-        player.destination = map.GetPositionFromNormalized(normalizedPos);
+        Main = this;    
+        StartCoroutine(UpdatePath());
+    }
+
+    public void SetDesiredPosition(Vector3 pos)
+    {
+        Debug.Log("Setting desired pos BRUH");
+        player.destination = pos;
         pathActive = true;
     }
 

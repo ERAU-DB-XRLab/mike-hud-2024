@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class MIKESpecWidget : MIKEExpandingWidget
@@ -13,10 +14,15 @@ public class MIKESpecWidget : MIKEExpandingWidget
     protected new void Awake()
     {
         base.Awake();
+        TSSManager.Main.OnSpecUpdated += AddSpecData;
     }
 
     public void AddSpecData(SpecData data)
     {
+        if(data.id == 0)
+        {
+            return;
+        }
         MIKESpecDataEntry entry = Instantiate(specDataPrefab, specEntries.transform).GetComponent<MIKESpecDataEntry>();
         entry.SetSpecData(data);
         entry.Clicked.AddListener(() => {
