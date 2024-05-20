@@ -45,19 +45,6 @@ public class MIKEServerManager : MonoBehaviour
         StartServer();
         SetEndPoint(otherIP);
 
-        // Receiving
-        /*Task.Run(async () =>
-        {
-            using (var udpClient = new UdpClient(receivePort))
-            {
-                while (tasksRunning)
-                {
-                    var receivedResults = await udpClient.ReceiveAsync();
-                    dataToReceive.Enqueue(receivedResults.Buffer);
-                    Debug.Log("Length: " + receivedResults.Buffer.Length);
-                }
-            }
-        });*/
     }
 
     public void StartServer()
@@ -84,13 +71,11 @@ public class MIKEServerManager : MonoBehaviour
         {
             try
             {
-                Debug.Log("Waiting for data...");
 
                 var receivedResults = await socket.ReceiveAsync(segBuffer, SocketFlags.None);
                 byte[] data = segBuffer.Slice(0, receivedResults).ToArray();
                 dataToReceive.Enqueue(data);
 
-                //Debug.Log("Length: " + data.Length);
             }
             catch (ObjectDisposedException)
             {
@@ -115,7 +100,6 @@ public class MIKEServerManager : MonoBehaviour
         //Debug.Log("Data Count: " + dataToReceive.Count);
         if (dataToReceive.Count > 0)
         {
-            Debug.Log("Receiving data...");
             MIKEInputManager.Main.ReceiveInput(dataToReceive.TryDequeue(out byte[] data) ? data : null);
 
             /*if (dataToReceive.Count > 40)

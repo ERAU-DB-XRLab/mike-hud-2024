@@ -20,7 +20,8 @@ public class MIKEMap : MonoBehaviour
         {
 
             char letter = code[0];
-            int numberIndex = int.Parse(code[1].ToString());
+            string number = code.Substring(1, code.Length - 1);
+            int numberIndex = int.Parse(number);
 
             int letterIndex = 0;
 

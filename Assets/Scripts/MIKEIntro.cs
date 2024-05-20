@@ -12,6 +12,7 @@ public class MIKEIntro : MonoBehaviour
     public void Play()
     {
         main.SetActive(false);
+        MIKESFXManager.main.PlaySFX("Welcome", 1f);
         dissipate = GetComponentsInChildren<Dissipate>();
         foreach (Dissipate d in dissipate)
         {

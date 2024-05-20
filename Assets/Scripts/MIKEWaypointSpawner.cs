@@ -44,6 +44,8 @@ public class MIKEWaypointSpawner : MonoBehaviour
         waypoints.Add(waypointID, waypoint.GetComponent<MIKEWaypoint>());
         AngleWaypoint(waypoint);
 
+        MIKENavigationManager.Main.SetDesiredPosition(waypoint.transform.position);
+
         // SEND TO LMCC
         var packet = new MIKEPacket();
         packet.Write((int)WaypointServiceType.Create);

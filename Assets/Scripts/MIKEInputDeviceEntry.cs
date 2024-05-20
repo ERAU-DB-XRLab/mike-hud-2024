@@ -32,6 +32,7 @@ public class MIKEInputDeviceEntry : MIKEButton
         if (Time.realtimeSinceStartup - lastCommunicationTime > 5f && connected)
         {
             Disconnected.Invoke(deviceID);
+            MIKESFXManager.main.PlaySFX("DisconnectedDevice", 1f);
             connected = false;
         }
     }

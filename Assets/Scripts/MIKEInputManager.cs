@@ -40,6 +40,7 @@ public class MIKEInputManager : MonoBehaviour
         deviceType.Add(2, "Camera");
         deviceType.Add(4, "LMCC");
         deviceType.Add(5, "HUD");
+        deviceType.Add(9, "Glove");
     }
 
     public void RegisterInputDevice(int id)
@@ -57,6 +58,7 @@ public class MIKEInputManager : MonoBehaviour
 
         // Notify user
         MIKENotificationManager.Main.SendNotification("NOTIFICATION", "New Input Device Connected!", MIKEResources.Main.PositiveNotificationColor, 2.5f);
+        MIKESFXManager.main.PlaySFX("NewDevice", 1f);
 
     }
 

@@ -4,6 +4,43 @@ using UnityEngine;
 
 public class MIKETaskViewerWidget : MIKEExpandingWidget
 {
+
+    [SerializeField] private GameObject taskEntries;
+    private MIKETaskList currentTaskList;
+
+    public void ActivateTaskList(MIKETaskList list)
+    {
+        this.currentTaskList = list;
+        list.gameObject.SetActive(true);
+        taskEntries.SetActive(false);
+    }
+
+    public void NextTask()
+    {
+        if(currentTaskList)
+        {
+            currentTaskList.NextTask();
+        }
+    }
+
+    public void GoBack()
+    {
+        if(currentTaskList)
+        {
+            currentTaskList.gameObject.SetActive(false);
+            taskEntries.SetActive(true);
+        }
+    }
+
+    public void PreviousTask()
+    {
+        if(currentTaskList)
+        {
+            currentTaskList.PreviousTask();
+        }
+    }
+
+
     /*[SerializeField] private GameObject taskPrefab;
     [SerializeField] private Transform taskParent;
 

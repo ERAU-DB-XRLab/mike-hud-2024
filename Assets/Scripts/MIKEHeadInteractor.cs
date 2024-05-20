@@ -6,13 +6,15 @@ using UnityEngine.InputSystem;
 public class MIKEHeadInteractor : MonoBehaviour
 {
 
+    public static MIKEHeadInteractor Main;
+
     private MIKEWidget currentWidget;
     [SerializeField] private InputActionProperty property;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        
+        Main = this;
     }
 
     // Update is called once per frame
@@ -42,19 +44,30 @@ public class MIKEHeadInteractor : MonoBehaviour
 
         if(property.action.WasPressedThisFrame())
         {
-            if(currentWidget)
-            {
-                currentWidget.OnClickStart();
-            }
+            Click();
         }
 
         if(property.action.WasReleasedThisFrame())
         {
-            if(currentWidget)
-            {
-                currentWidget.OnClickEnd();
-            }
+            Unclick();
         }
 
     }
+
+    public void Click()
+    {
+        if(currentWidget)
+        {
+            currentWidget.OnClickStart();
+        }
+    }
+
+    public void Unclick()
+    {
+        if (currentWidget)
+        {
+            currentWidget.OnClickEnd();
+        }
+    }
+
 }

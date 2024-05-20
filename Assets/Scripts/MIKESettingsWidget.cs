@@ -7,6 +7,7 @@ public class MIKESettingsWidget : MIKEExpandingWidget
 {
 
     [SerializeField] private TMP_InputField tss, lmcc;
+    [SerializeField] private TMP_Text evText;
     private TMP_InputField selectedInputField;
     
     // Start is called before the first frame update
@@ -21,6 +22,19 @@ public class MIKESettingsWidget : MIKEExpandingWidget
         {
             tss.text = PlayerPrefs.GetString("TSS-IP");
             lmcc.text = PlayerPrefs.GetString("LMCC-IP");
+        }
+    }
+
+    public void SwapEV()
+    {
+        if(TSSManager.Main.CurrentEVA == EVA.EVA1)
+        {
+            TSSManager.Main.CurrentEVA = EVA.EVA2;
+            evText.text = "EV2";
+        } else
+        {
+            TSSManager.Main.CurrentEVA = EVA.EVA1;
+            evText.text = "EV1";
         }
     }
 
