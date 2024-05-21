@@ -83,7 +83,6 @@ public class MIKETrackedObjectSpawner : MonoBehaviour
         {
             currOtherAstronaut.transform.localPosition = Vector3.Lerp(currOtherAstronaut.transform.localPosition, otherAstronautNewLocalPosition, Time.deltaTime * interpolationSpeed);
             currOtherAstronaut.transform.localRotation = Quaternion.Lerp(currOtherAstronaut.transform.localRotation, otherAstronautNewLocalRotation, Time.deltaTime * interpolationSpeed);
-            MIKENavigationManager.Main.SetDesiredPosition(currOtherAstronaut.transform.position);
 
         }
 

@@ -6,6 +6,7 @@ public class MIKECompass : MonoBehaviour
 {
 
     [SerializeField] private Transform bodyOrigin;
+    [SerializeField] private MIKECalibration calibration;
 
     // Start is called before the first frame update
     void Start()

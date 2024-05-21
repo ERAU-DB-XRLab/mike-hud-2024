@@ -1,11 +1,17 @@
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 using System.Linq;
 
 public class MIKEAudioTransmitter : MonoBehaviour
 {
     public static MIKEAudioTransmitter Main { get; private set; }
+
+    public delegate void StartRec();
+    public event StartRec OnRecordingStart;
+
+    public delegate void StopRec();
+    public event StopRec OnRecordingStop;
 
     private AudioClip currentClip;
     private float[] audioData;
@@ -76,6 +82,7 @@ public class MIKEAudioTransmitter : MonoBehaviour
         currentClip = Microphone.Start(debugMode ? deviceName : Microphone.devices[0], false, maxSeconds, frequency);
         timer = 0;
         recording = true;
+        OnRecordingStart?.Invoke();
     }
 
     public void StopRecording()
@@ -95,6 +102,7 @@ public class MIKEAudioTransmitter : MonoBehaviour
         MIKEServerManager.Main.SendData(ServiceType.Audio, packet, DeliveryType.Unreliable);
 
         MIKENotificationManager.Main.SendNotification("NOTIFICATION", "Audio message sent", MIKEResources.Main.PositiveNotificationColor, 5f);
+        OnRecordingStop?.Invoke();
     }
 
     public void SendData()

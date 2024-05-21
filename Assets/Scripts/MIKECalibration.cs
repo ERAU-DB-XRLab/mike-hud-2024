@@ -8,24 +8,35 @@ public class MIKECalibration : MonoBehaviour
     [SerializeField] private MIKEMap map;
     [SerializeField] private Transform mapParent;
 
-    private Vector3 astronautPosition;
     private float astronautHeading;
+
+    private float defaultEasting = 298355;
+    private float defaultNorthing = 3272383;
+
+    private Vector3 middlePos;
+    private Vector2 astronautPos;
 
     // Start is called before the first frame update
     void Start()
     {
+        middlePos = new Vector2(defaultEasting, defaultNorthing);
         TSSManager.Main.OnIMUUpdated += UpdateIMU;
+    }
+
+    void Update()
+    {
+        Debug.Log("BRUH: " + (new Vector3(middlePos.x, 0, middlePos.y) + GameObject.Find("XR Origin").transform.position));
     }
 
     private void UpdateIMU(IMUData data)
     {
-        astronautPosition = map.GetPositionFromUTM(data.YourEVA.posx, data.YourEVA.posy, false);
-        astronautHeading = (float)data.YourEVA.heading;
+        astronautPos = new Vector2(298405, 3272438);
+        astronautHeading = (float)data.YourEVA.heading + 90;
+        Debug.Log(data.YourEVA.posx + " " + data.YourEVA.posy);
     }
 
     public void Calibrate()
     {
-        mapParent.transform.eulerAngles = new Vector3(0f, -astronautHeading, 0f);
-        mapParent.transform.position = mapParent.transform.TransformPoint(Camera.main.transform.position - astronautPosition);
+        mapParent.transform.position = new Vector3(middlePos.x - astronautPos.x, 0, middlePos.y - astronautPos.y);
     }
 }

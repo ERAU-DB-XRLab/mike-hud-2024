@@ -11,6 +11,8 @@ public class MIKEHeadInteractor : MonoBehaviour
     private MIKEWidget currentWidget;
     [SerializeField] private InputActionProperty property;
 
+    private float lastClickTime = 0;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -45,6 +47,11 @@ public class MIKEHeadInteractor : MonoBehaviour
         if(property.action.WasPressedThisFrame())
         {
             Click();
+            if(Time.timeSinceLevelLoad - lastClickTime < 0.25f)
+            {
+                MIKEScreenManager.Main.gameObject.SetActive(!MIKEScreenManager.Main.gameObject.activeSelf);
+            }
+            lastClickTime = Time.timeSinceLevelLoad;
         }
 
         if(property.action.WasReleasedThisFrame())

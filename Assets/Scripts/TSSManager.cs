@@ -72,6 +72,7 @@ public class TSSManager : MonoBehaviour
             Main = this;
         else
             Destroy(this.gameObject);
+
     }
 
     // Start is called before the first frame update

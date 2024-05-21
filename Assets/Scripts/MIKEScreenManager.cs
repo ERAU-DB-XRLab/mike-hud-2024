@@ -5,8 +5,15 @@ using UnityEngine;
 public class MIKEScreenManager : MonoBehaviour
 {
 
+    public static MIKEScreenManager Main;
+
     [SerializeField] private Transform canvas;
     [SerializeField] private float forwardOffset, verticalOffset;
+
+    void Awake()
+    {
+        Main = this;        
+    }
 
     // Update is called once per frame
     void Update()

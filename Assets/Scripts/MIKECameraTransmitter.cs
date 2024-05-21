@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.XR.MagicLeap;
 
 public class MIKECameraTransmitter : MonoBehaviour
 {
@@ -9,7 +11,9 @@ public class MIKECameraTransmitter : MonoBehaviour
 
     private WebCamTexture webCamTexture;
 
-    [SerializeField] private int framesPerSecond = 15;
+    public RawImage img;
+
+    [SerializeField] private float framesPerSecond = 15;
     [SerializeField] private int quality = 15;
     [SerializeField] private int width = 640;
     [SerializeField] private int height = 480;
@@ -18,13 +22,17 @@ public class MIKECameraTransmitter : MonoBehaviour
     [SerializeField] private bool debugMode = false;
     [SerializeField] private string deviceName;
 
+    public RawImage test;
+
     void Awake()
     {
         if (Main == null)
             Main = this;
         else
             Destroy(this);
-    }
+
+
+    } 
 
     // Start is called before the first frame update
     void Start()
@@ -51,11 +59,13 @@ public class MIKECameraTransmitter : MonoBehaviour
         {
             if (webCamTexture.isPlaying)
             {
-                Texture2D t = new Texture2D(width, height);
+                Texture2D t = new Texture2D(webCamTexture.width, webCamTexture.height);
                 t.SetPixels(webCamTexture.GetPixels());
+                t.Apply();
                 var packet = new MIKEPacket(t.EncodeToJPG(quality));
-                MIKEServerManager.Main.SendData(ServiceType.Camera, packet, DeliveryType.Unreliable);
 
+                MIKEServerManager.Main.SendData(ServiceType.Camera, packet, DeliveryType.Unreliable);
+                Debug.Log(packet.ByteArray.Length);
                 yield return new WaitForSeconds(1f / framesPerSecond);
             }
             else

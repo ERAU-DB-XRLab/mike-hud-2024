@@ -50,6 +50,7 @@ public class MIKEServerManager : MonoBehaviour
     public void StartServer()
     {
         socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+        socket.ReceiveBufferSize = 65536*2;
         socket.Bind(new IPEndPoint(IPAddress.Any, receivePort));
         tasksRunning = true;
         ReceiveData();

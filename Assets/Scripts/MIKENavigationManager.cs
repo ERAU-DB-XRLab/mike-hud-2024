@@ -15,6 +15,7 @@ public class MIKENavigationManager : MonoBehaviour
     [SerializeField] private MIKEMap map;
     [SerializeField] private Transform player;
     [SerializeField] private LineRenderer r;
+    [SerializeField] private MeshRenderer mapRenderer;
 
     private NavMeshPath path;
     private Vector3 endPos;
@@ -51,6 +52,11 @@ public class MIKENavigationManager : MonoBehaviour
         yield return new WaitForSeconds(3);
         StartCoroutine(UpdatePath());
 
+    }
+
+    public void ToggleMap()
+    {
+        mapRenderer.enabled = !mapRenderer.enabled;
     }
 
 }

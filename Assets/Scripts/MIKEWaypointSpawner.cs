@@ -37,6 +37,7 @@ public class MIKEWaypointSpawner : MonoBehaviour
 
     public void SpawnWaypoint()
     {
+
         int waypointID = UnityEngine.Random.Range(0, 10000000);
         Vector2 normalizedPos = map.NormalizePosition(map.transform.InverseTransformPoint(bodyOrigin.transform.position));
         GameObject waypoint = Instantiate(waypointPrefab, map.GetPositionFromNormalized(normalizedPos), Quaternion.identity);
@@ -44,7 +45,6 @@ public class MIKEWaypointSpawner : MonoBehaviour
         waypoints.Add(waypointID, waypoint.GetComponent<MIKEWaypoint>());
         AngleWaypoint(waypoint);
 
-        MIKENavigationManager.Main.SetDesiredPosition(waypoint.transform.position);
 
         // SEND TO LMCC
         var packet = new MIKEPacket();
@@ -69,6 +69,10 @@ public class MIKEWaypointSpawner : MonoBehaviour
         waypoints.Add(waypointID, waypoint.GetComponent<MIKEWaypoint>());
         AngleWaypoint(waypoint);
 
+        Debug.Log("WAYPOINT");
+        MIKENotificationManager.Main.SendNotification("LMCC", "Waypoint spawned!", Color.green, 2f);
+        MIKENavigationManager.Main.SetDesiredPosition(waypoint.transform.position);
+
         waypoints[waypointID].WaypointID = waypointID;
         waypoints[waypointID].WaypointNumber = "LMCC " + waypointNum.ToString();
         waypoints[waypointID].WaypointText.SetValue(waypointNum.ToString());
@@ -78,6 +82,7 @@ public class MIKEWaypointSpawner : MonoBehaviour
     {
         waypoints[waypointID].transform.position = waypointPos;
         AngleWaypoint(waypoints[waypointID].gameObject);
+        MIKENavigationManager.Main.SetDesiredPosition(waypointPos);
     }
 
     public void DeleteWaypoint(int waypointID)
