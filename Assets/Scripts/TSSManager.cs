@@ -167,6 +167,12 @@ public class TSSManager : MonoBehaviour
             OnDisconnected?.Invoke();
         }
     }
+
+    public void SetHost(string host)
+    {
+        this.host = host;
+    }
+
 }
 
 public class UIAWrapper

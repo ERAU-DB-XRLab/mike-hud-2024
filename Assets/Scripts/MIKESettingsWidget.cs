@@ -16,15 +16,6 @@ public class MIKESettingsWidget : MIKEExpandingWidget
         base.Awake();
     }
 
-    void Start()
-    {
-        if (PlayerPrefs.HasKey("TSS-IP"))
-        {
-            tss.text = PlayerPrefs.GetString("TSS-IP");
-            lmcc.text = PlayerPrefs.GetString("LMCC-IP");
-        }
-    }
-
     public void SwapEV()
     {
         if(TSSManager.Main.CurrentEVA == EVA.EVA1)
@@ -63,10 +54,24 @@ public class MIKESettingsWidget : MIKEExpandingWidget
         
     }
 
-    private void OnDisable()
+    public void SetTSSIP(string ip)
     {
-        PlayerPrefs.SetString("TSS-IP", tss.text);
-        PlayerPrefs.SetString("LMCC-IP", lmcc.text);
+        tss.text = ip;
+    }
+
+    public void SetLMCCIP(string ip)
+    {
+        lmcc.text = ip;
+    }
+
+    public string GetTSSIP()
+    {
+        return tss.text;
+    }
+
+    public string GetLMCCIP()
+    {
+        return lmcc.text;
     }
 
 
