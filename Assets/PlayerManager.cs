@@ -17,6 +17,9 @@ public class PlayerManager : MonoBehaviour
             leftHandDevice = InputSubsystem.Utils.FindMagicLeapDevice(InputDeviceCharacteristics.HandTracking | InputDeviceCharacteristics.Left);
             rightHandDevice = InputSubsystem.Utils.FindMagicLeapDevice(InputDeviceCharacteristics.HandTracking | InputDeviceCharacteristics.Right);
             return;
+        } else
+        {
+            Debug.Log("VALID!");
         }
 
 

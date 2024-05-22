@@ -4,15 +4,17 @@ using UnityEngine;
 
 public class MIKETaskList : MonoBehaviour
 {
+
+    [SerializeField] private string taskListName;
+
     private List<GameObject> tasks = new List<GameObject>();
     private int taskIndex = 0;
 
     private void Awake()
     {
-        Transform[] children = GetComponentsInChildren<Transform>();
-        for(int i = 1; i < children.Length; i++)
+        foreach(Transform t in transform)
         {
-            tasks.Add(children[i].gameObject);
+            tasks.Add(t.gameObject);
         }
     }
 
@@ -44,6 +46,21 @@ public class MIKETaskList : MonoBehaviour
             taskIndex--;
             tasks[taskIndex].SetActive(true);
         }
+    }
+
+    public string GetTaskListName()
+    {
+        return taskListName;
+    }
+
+    public int GetTaskIndex()
+    {
+        return taskIndex;
+    }
+
+    public int GetTaskCount()
+    {
+        return tasks.Count;
     }
 
 }

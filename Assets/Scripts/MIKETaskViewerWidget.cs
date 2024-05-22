@@ -1,11 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class MIKETaskViewerWidget : MIKEExpandingWidget
 {
 
     [SerializeField] private GameObject taskEntries;
+    [SerializeField] private GameObject taskButtons;
+    [SerializeField] private TMP_Text taskListName, taskIndex;
+
     private MIKETaskList currentTaskList;
 
     public void ActivateTaskList(MIKETaskList list)
@@ -13,6 +17,16 @@ public class MIKETaskViewerWidget : MIKEExpandingWidget
         this.currentTaskList = list;
         list.gameObject.SetActive(true);
         taskEntries.SetActive(false);
+        taskButtons.SetActive(true);
+
+        taskListName.SetText(list.GetTaskListName());
+
+        UpdateTaskIndex();
+    }
+
+    public void UpdateTaskIndex()
+    {
+        taskIndex.SetText("Task Number: " + (currentTaskList.GetTaskIndex() + 1) + "/" + currentTaskList.GetTaskCount());
     }
 
     public void NextTask()
@@ -20,6 +34,7 @@ public class MIKETaskViewerWidget : MIKEExpandingWidget
         if(currentTaskList)
         {
             currentTaskList.NextTask();
+            UpdateTaskIndex();
         }
     }
 
@@ -29,6 +44,7 @@ public class MIKETaskViewerWidget : MIKEExpandingWidget
         {
             currentTaskList.gameObject.SetActive(false);
             taskEntries.SetActive(true);
+            taskButtons.SetActive(false);
         }
     }
 
@@ -37,6 +53,7 @@ public class MIKETaskViewerWidget : MIKEExpandingWidget
         if(currentTaskList)
         {
             currentTaskList.PreviousTask();
+            UpdateTaskIndex();
         }
     }
 
