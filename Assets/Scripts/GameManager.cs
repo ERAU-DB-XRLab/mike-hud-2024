@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -18,6 +19,18 @@ public class GameManager : MonoBehaviour
         intro.Play();
         yield return new WaitUntil(() => intro.Complete);
         yield return new WaitForSeconds(1f);
-        calibration.Calibrate();
+        if (PlayerPrefs.HasKey("useFailSafe"))
+        {
+            calibration.Calibrate(true);
+            PlayerPrefs.DeleteKey("useFailSafe");
+        }
+        else
+            calibration.Calibrate();
+    }
+
+    public void SetUseFailSafe()
+    {
+        PlayerPrefs.SetInt("useFailSafe", 1);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

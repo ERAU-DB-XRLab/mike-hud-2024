@@ -136,7 +136,6 @@ public class TSSManager : MonoBehaviour
             //Debug.Log("TELEMETRY Updated");
             TelemetryData = JsonConvert.DeserializeObject<TelemetryWrapper>(TSSc.GetTELEMETRYJsonString()).telemetry;
             EVATime = TelemetryData.eva_time;
-            Debug.Log("EVA Time: " + EVATime);
             OnTelemetryUpdated?.Invoke(TelemetryData);
         }
 

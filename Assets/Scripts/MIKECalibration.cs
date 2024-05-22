@@ -7,36 +7,34 @@ public class MIKECalibration : MonoBehaviour
 {
     [SerializeField] private MIKEMap map;
     [SerializeField] private Transform mapParent;
+    [SerializeField] private Transform mapRotate;
+    [SerializeField] private Transform mapCorrection;
+    [SerializeField] private Transform failsafe;
 
-    private float astronautHeading;
+    [Header("This should be the main camera in most cases")]
+    [SerializeField] private Transform rotateSnap;
 
-    private float defaultEasting = 298355;
-    private float defaultNorthing = 3272383;
-
-    private Vector3 middlePos;
-    private Vector2 astronautPos;
+    private float easting, northing;
+    private float heading;
 
     // Start is called before the first frame update
     void Start()
     {
-        middlePos = new Vector2(defaultEasting, defaultNorthing);
         TSSManager.Main.OnIMUUpdated += UpdateIMU;
-    }
-
-    void Update()
-    {
-        Debug.Log("BRUH: " + (new Vector3(middlePos.x, 0, middlePos.y) + GameObject.Find("XR Origin").transform.position));
     }
 
     private void UpdateIMU(IMUData data)
     {
-        astronautPos = new Vector2(298405, 3272438);
-        astronautHeading = (float)data.YourEVA.heading + 90;
-        Debug.Log(data.YourEVA.posx + " " + data.YourEVA.posy);
+        easting = 298305;
+        northing = 3272330;
+        heading = 90f;
     }
 
-    public void Calibrate()
+    public void Calibrate(bool useFailsafe = false)
     {
-        mapParent.transform.position = new Vector3(middlePos.x - astronautPos.x, 0, middlePos.y - astronautPos.y);
+        mapCorrection.rotation = Quaternion.Euler(0f, rotateSnap.eulerAngles.y, 0f);
+        mapRotate.forward = -Vector3.ProjectOnPlane(rotateSnap.forward, Vector3.up);
+        Vector3 astronautPosition = map.GetPositionFromUTM(easting, northing, false);
+        mapParent.position = rotateSnap.position - (useFailsafe ? failsafe.position : astronautPosition);
     }
 }
