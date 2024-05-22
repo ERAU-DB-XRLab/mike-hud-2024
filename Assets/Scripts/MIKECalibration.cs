@@ -36,5 +36,8 @@ public class MIKECalibration : MonoBehaviour
         mapRotate.forward = -Vector3.ProjectOnPlane(rotateSnap.forward, Vector3.up);
         Vector3 astronautPosition = map.GetPositionFromUTM(easting, northing, false);
         mapParent.position = rotateSnap.position - (useFailsafe ? failsafe.position : astronautPosition);
+
+        // Make compass face forward
+        MIKECompass.Main.transform.forward = Camera.main.transform.forward;
     }
 }

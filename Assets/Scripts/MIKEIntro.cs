@@ -23,8 +23,9 @@ public class MIKEIntro : MonoBehaviour
 
     public IEnumerator ShowApp()
     {
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(6f);
         main.SetActive(true);
+        MIKETutorialManager.Main.ShowPrompt();
         Complete = true;
     }
 

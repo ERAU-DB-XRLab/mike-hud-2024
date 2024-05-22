@@ -5,8 +5,15 @@ using UnityEngine;
 public class MIKECompass : MonoBehaviour
 {
 
+    public static MIKECompass Main { get; private set; }
+
     [SerializeField] private Transform bodyOrigin;
     [SerializeField] private MIKECalibration calibration;
+
+    void Awake()
+    {
+        Main = this;    
+    }
 
     // Start is called before the first frame update
     void Start()

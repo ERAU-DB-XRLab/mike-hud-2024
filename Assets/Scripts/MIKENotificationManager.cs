@@ -26,7 +26,7 @@ public class MIKENotificationManager : MonoBehaviour
 
     }
 
-    public void Create(string header, string content, Color c, float time)
+    private void Create(string header, string content, Color c, float time)
     {
         MIKENotification notification = Instantiate(notificationPrefab, notificationParent).GetComponent<MIKENotification>();
         notification.transform.localPosition = Vector3.zero;

@@ -171,6 +171,7 @@ public class TSSManager : MonoBehaviour
     public void SetHost(string host)
     {
         this.host = host;
+        Start();
     }
 
 }

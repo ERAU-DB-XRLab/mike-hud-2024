@@ -7,12 +7,13 @@ public class MIKETaskList : MonoBehaviour
     private List<GameObject> tasks = new List<GameObject>();
     private int taskIndex = 0;
 
+    [SerializeField] private string taskListName;
+
     private void Awake()
     {
-        Transform[] children = GetComponentsInChildren<Transform>();
-        for(int i = 1; i < children.Length; i++)
+        foreach(Transform t in this.transform)
         {
-            tasks.Add(children[i].gameObject);
+            tasks.Add(t.gameObject);
         }
     }
 
@@ -44,6 +45,21 @@ public class MIKETaskList : MonoBehaviour
             taskIndex--;
             tasks[taskIndex].SetActive(true);
         }
+    }
+
+    public int GetTaskCount()
+    {
+        return tasks.Count;
+    }
+
+    public int GetCurrentTaskNumber()
+    {
+        return taskIndex;
+    }
+
+    public string GetTaskListName()
+    {
+        return taskListName;
     }
 
 }

@@ -14,6 +14,7 @@ public class MIKEGloveDeviceEntry : MIKEInputDeviceEntry
     new void Start()
     {
         base.Start();
+        PlayerManager.Instance.ShowFingers();
         MIKEAudioTransmitter.Main.OnRecordingStart += () => recording = true;
         MIKEAudioTransmitter.Main.OnRecordingStop += () => recording = false;
     }

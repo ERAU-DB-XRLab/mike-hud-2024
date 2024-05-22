@@ -47,6 +47,7 @@ public class MIKEButton : MIKEWidget, ISelectHandler, IDeselectHandler
     {
         base.OnClickStart();
         highlight.color = Color.green;
+        MIKESFXManager.main.PlaySFX("ButtonClick", 0.5f);
         Clicked.Invoke();
     }
 

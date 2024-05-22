@@ -5,9 +5,11 @@ using UnityEngine;
 public class MIKESaveManager : MonoBehaviour
 {
     [SerializeField] private MIKESettingsWidget m_SettingsWidget;
+    [SerializeField] private bool loadOnStart;
 
-    void Awake()
+    void OnEnable()
     {
+        if(loadOnStart)
         Load();    
     }
 
@@ -29,21 +31,24 @@ public class MIKESaveManager : MonoBehaviour
         }
     }
 
+    public void UseDefaultTelemetry()
+    {
+        m_SettingsWidget.SetTSSIP("165.227.90.160");
+        Apply();
+    }
+
     public void Apply()
     {
         TSSManager.Main.SetHost(m_SettingsWidget.GetTSSIP());
         MIKEServerManager.Main.SetEndPoint(m_SettingsWidget.GetLMCCIP());
+        MIKENotificationManager.Main.SendNotification("IP UPDATE", "IPs Successfully Updated", Color.green, 2f);
+        Save();
     }
 
     public void Save()
     {
         PlayerPrefs.SetString("TSS-IP", m_SettingsWidget.GetTSSIP());
         PlayerPrefs.SetString("LMCC-IP", m_SettingsWidget.GetLMCCIP());
-    }
-
-    void OnDisable()
-    {
-        Save();
     }
 
 }
